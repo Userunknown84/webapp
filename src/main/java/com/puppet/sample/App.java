@@ -1,21 +1,13 @@
 package com.puppet.sample;
 
-import spark.ModelAndView;
 import spark.Request;
-import spark.Response;
 import spark.Spark;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static spark.Spark.get;
 import static spark.Spark.before;
+import static spark.Spark.get;
 
-public class App
-{
+public class App {
 
-  public String enMsg()
-  {
+  public String enMsg() {
     return "Hello World!";
   }
 
@@ -38,11 +30,25 @@ public class App
     Spark.threadPool(10, 5, 600);
 
     before((request, response) -> {
-        System.out.println(requestInfoToString(request));
+      System.out.println(requestInfoToString(request));
     });
 
-    get("/", (request,response) -> "Hello!!! My version is 1.0 and I am built from Develop branch on port 9999!");
-    
-  }
+    get("/", (request, response) ->
+            "Hello!!! My version is 1.0 and I am built from Develop branch on port 9999!"
+    );
 
+    get("/hello", (request, response) -> "Hello World from Spark Server!");
+
+    get("/hello-json", (request, response) -> {
+      response.type("application/json");
+      return "{ \"message\": \"Hello World in JSON!\", \"status\": \"success\" }";
+    });
+    
+    get("/greet", (request, response) -> {
+      response.type("application/json");
+      String name = request.queryParams("name");
+      if (name == null || name.isEmpty()) name = "Guest";
+      return "{ \"message\": \"Hello, " + name + "!\" }";
+    });
+  }
 }
